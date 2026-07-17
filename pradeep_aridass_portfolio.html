@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pradeep Aridass — Senior QA Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0e14;
+    --panel: #10151c;
+    --panel-2: #0d1218;
+    --border: #1e2530;
+    --text: #c9d1d9;
+    --muted: #6e7681;
+    --green: #3fb950;
+    --blue: #58a6ff;
+    --amber: #d29922;
+    --red: #f85149;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    font-size:15px;
+  }
+  ::selection{background:rgba(63,185,80,0.3); color:#fff;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  a{color:inherit;}
+  .skip-link{position:absolute; left:-999px; top:0; background:var(--green); color:#000; padding:8px 12px; z-index:100;}
+  .skip-link:focus{left:8px; top:8px;}
+
+  /* ===== layout shell ===== */
+  .shell{
+    display:grid;
+    grid-template-columns: 240px 1fr;
+    min-height:100vh;
+  }
+  @media (max-width: 860px){
+    .shell{grid-template-columns: 1fr;}
+  }
+
+  /* ===== sidebar / file tree ===== */
+  .sidebar{
+    background:var(--panel-2);
+    border-right:1px solid var(--border);
+    padding:20px 0;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  @media (max-width: 860px){
+    .sidebar{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border);}
+  }
+  .sidebar-header{
+    padding:0 18px 16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:10px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); flex-shrink:0;}
+  .sidebar-title{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--muted); letter-spacing:0.03em;}
+  .file-tree{list-style:none; padding:6px 8px;}
+  .file-tree li a{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--muted);
+    text-decoration:none;
+    padding:7px 10px;
+    border-radius:6px;
+    transition:background .15s, color .15s;
+  }
+  .file-tree li a:hover, .file-tree li a:focus-visible{
+    background:rgba(88,166,255,0.08);
+    color:var(--text);
+    outline:none;
+  }
+  .file-tree li a .ext{color:var(--muted); opacity:0.7;}
+  .sidebar-foot{padding:16px 18px 0; margin-top:14px; border-top:1px solid var(--border);}
+  .sidebar-foot p{font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--muted); line-height:1.7;}
+
+  /* ===== main pane ===== */
+  .main{min-width:0;}
+  .tabbar{
+    display:flex; align-items:center;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+    padding:0 4px;
+    position:sticky; top:0; z-index:10;
+  }
+  .tab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--text);
+    padding:11px 16px;
+    border-right:1px solid var(--border);
+    display:flex; align-items:center; gap:8px;
+    background:var(--panel-2);
+  }
+  .tab .close{color:var(--muted); font-size:14px;}
+
+  section{padding:56px 48px; max-width:920px;}
+  @media (max-width:640px){ section{padding:36px 20px;} }
+
+  /* ===== hero / terminal ===== */
+  .hero{padding-top:64px; padding-bottom:40px;}
+  .prompt-line{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--green);
+    font-size:14px;
+    margin-bottom:6px;
+  }
+  .prompt-line .path{color:var(--blue);}
+  .hero h1{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:clamp(28px, 5vw, 46px);
+    letter-spacing:-0.01em;
+    margin:14px 0 6px;
+    color:#fff;
+  }
+  .cursor{
+    display:inline-block; width:10px; height:1em; background:var(--green);
+    margin-left:4px; vertical-align:text-bottom;
+    animation:blink 1s steps(1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .cursor{animation:none; opacity:1;} }
+  @keyframes blink{ 50%{opacity:0;} }
+  .hero .role{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--amber);
+    font-size:16px;
+    margin-bottom:20px;
+  }
+  .hero p.lede{color:var(--text); max-width:640px; font-size:15.5px;}
+  .contact-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px;}
+  .pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--text);
+    padding:8px 13px;
+    border-radius:6px;
+    text-decoration:none;
+    display:inline-flex; align-items:center; gap:7px;
+    transition:border-color .15s, color .15s;
+  }
+  .pill:hover, .pill:focus-visible{border-color:var(--blue); color:var(--blue); outline:none;}
+
+  /* ===== section headers ===== */
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:22px;}
+  .sec-head h2{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+  }
+  .sec-head .rule{flex:1; height:1px; background:var(--border);}
+
+  /* ===== verdict badge — signature element ===== */
+  .verdict{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:#0a0e14;
+    background:var(--green);
+    padding:3px 9px;
+    border-radius:4px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+  }
+  .verdict::before{content:"✓";}
+
+  /* ===== summary ===== */
+  .summary-block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-left:3px solid var(--green);
+    border-radius:0 8px 8px 0;
+    padding:22px 24px;
+    font-size:15px;
+  }
+
+  /* ===== skills as json ===== */
+  .json-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:22px 26px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+    overflow-x:auto;
+  }
+  .json-card .k{color:var(--blue);}
+  .json-card .s{color:var(--amber);}
+  .json-card .punc{color:var(--muted);}
+  .json-card .line{white-space:pre;}
+
+  /* ===== experience ===== */
+  .job{
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--panel);
+    margin-bottom:18px;
+    overflow:hidden;
+  }
+  .job-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .job-head h3{
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    color:#fff;
+    font-weight:700;
+  }
+  .job-head .meta{color:var(--muted); font-size:13px; margin-top:4px; font-family:'JetBrains Mono', monospace;}
+  .job-body{padding:18px 22px;}
+  .job-body .proj{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--blue);
+    font-size:13px;
+    margin-bottom:10px;
+  }
+  .job-body ul{list-style:none;}
+  .job-body li{
+    position:relative;
+    padding-left:20px;
+    margin-bottom:9px;
+    font-size:14.5px;
+    color:var(--text);
+  }
+  .job-body li::before{
+    content:"›";
+    position:absolute; left:0; top:0;
+    color:var(--green);
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+  }
+  .job-body li b{color:var(--amber); font-weight:600;}
+
+  /* ===== certifications log ===== */
+  .log{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px 24px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+  }
+  .log .row{padding:6px 0; color:var(--text); display:flex; gap:10px;}
+  .log .row .ok{color:var(--green);}
+  .log .row .tstamp{color:var(--muted); flex-shrink:0;}
+
+  /* education */
+  .edu-row{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:baseline;}
+  .edu-row .deg{font-size:15px; color:#fff; font-weight:600;}
+  .edu-row .school{color:var(--muted); font-family:'JetBrains Mono', monospace; font-size:13px;}
+
+  /* contact.sh */
+  .term-card{
+    background:#000;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:22px 24px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+  }
+  .term-card .cmd{color:var(--green);}
+  .term-card .cmd::before{content:"$ "; color:var(--muted);}
+  .term-card .out{color:var(--muted); margin:6px 0 16px 14px;}
+  .cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:6px;}
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:6px;
+    text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .btn-primary{background:var(--green); color:#0a0e14; font-weight:700;}
+  .btn-outline{border:1px solid var(--border); color:var(--text);}
+  .btn:hover, .btn:focus-visible{transform:translateY(-1px); outline:none;}
+
+  footer{padding:30px 48px 60px; color:var(--muted); font-family:'JetBrains Mono', monospace; font-size:12px;}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1; transform:none; transition:none;} }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<div class="shell">
+  <nav class="sidebar" aria-label="Section navigation">
+    <div class="sidebar-header">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="sidebar-title">pradeep-aridass /</span>
+    </div>
+    <ul class="file-tree">
+      <li><a href="#summary">summary<span class="ext">.md</span></a></li>
+      <li><a href="#skills">skills<span class="ext">.json</span></a></li>
+      <li><a href="#experience">experience<span class="ext">.log</span></a></li>
+      <li><a href="#education">education<span class="ext">.txt</span></a></li>
+      <li><a href="#certifications">certifications<span class="ext">.log</span></a></li>
+      <li><a href="#contact">contact<span class="ext">.sh</span></a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <p>build: passing<br>coverage: 7+ yrs<br>last deploy: Present</p>
+    </div>
+  </nav>
+
+  <main class="main" id="main-content">
+    <div class="tabbar" role="presentation">
+      <div class="tab"><span class="dot" style="box-shadow:none; background:var(--blue);"></span> resume.tsx <span class="close">×</span></div>
+    </div>
+
+    <section class="hero">
+      <div class="prompt-line"><span class="path">~/careers/pradeep-aridass</span> $ whoami</div>
+      <h1>Pradeep Aridass<span class="cursor" aria-hidden="true"></span></h1>
+      <div class="role">senior_qa_engineer — automation · test strategy · AI/LLM validation</div>
+      <p class="lede">7+ years building and validating software quality — from Selenium/Playwright automation frameworks to hands-on QA for AI/LLM systems. I design test strategy, catch what shouldn't ship, and build the pipelines that catch it automatically next time.</p>
+      <div class="contact-row">
+        <a class="pill" href="mailto:pradeeparidass99@gmail.com">✉ pradeeparidass99@gmail.com</a>
+        <a class="pill" href="tel:+919566885302">☎ +91-9566885302</a>
+        <a class="pill" href="https://www.linkedin.com/in/pradeep-aridass-senior-qa/" target="_blank" rel="noopener">in/pradeep-aridass-senior-qa</a>
+        <span class="pill" style="border-color:var(--border);">📍 Erode, Tamil Nadu, India</span>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="sec-head"><h2># summary.md</h2><div class="rule"></div></div>
+      <div class="summary-block reveal">
+        <p>Senior QA Engineer with 7+ years of experience spanning manual and automation testing, including 5+ years specializing in test automation using Selenium, Playwright (TypeScript), Java, and BDD/Cucumber frameworks. Proven expertise in API testing, database validation, AI/LLM output verification, and end-to-end test strategy design. Skilled at building scalable automation frameworks, driving defect-free releases, and collaborating in Agile/Scrum environments to deliver high-quality software.</p>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="sec-head"><h2># skills.json</h2><div class="rule"></div></div>
+      <div class="json-card reveal">
+<div class="line">{</div>
+<div class="line">  <span class="k">"testing_types"</span><span class="punc">:</span> [<span class="s">"Functional"</span>, <span class="s">"Regression"</span>, <span class="s">"Integration"</span>, <span class="s">"API"</span>, <span class="s">"Smoke"</span>, <span class="s">"Sanity"</span>, <span class="s">"UAT"</span>, <span class="s">"Mobile"</span>, <span class="s">"AI/LLM Output Validation"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"automation_tools"</span><span class="punc">:</span> [<span class="s">"Selenium WebDriver"</span>, <span class="s">"Playwright"</span>, <span class="s">"Appium"</span>, <span class="s">"Rest Assured"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"frameworks"</span><span class="punc">:</span> [<span class="s">"BDD"</span>, <span class="s">"Cucumber"</span>, <span class="s">"Page Object Model"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"languages"</span><span class="punc">:</span> [<span class="s">"Java"</span>, <span class="s">"TypeScript"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"tools"</span><span class="punc">:</span> [<span class="s">"JIRA"</span>, <span class="s">"Taiga"</span>, <span class="s">"Postman"</span>, <span class="s">"Git"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"databases"</span><span class="punc">:</span> [<span class="s">"SQL"</span>]<span class="punc">,</span></div>
+<div class="line">  <span class="k">"methodologies"</span><span class="punc">:</span> [<span class="s">"Agile/Scrum"</span>, <span class="s">"Test Strategy & Planning"</span>, <span class="s">"STLC/SDLC"</span>]</div>
+<div class="line">}</div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="sec-head"><h2># experience.log</h2><div class="rule"></div></div>
+
+      <div class="job reveal">
+        <div class="job-head">
+          <div>
+            <h3>Affine Analytics Pvt Ltd — Senior QA Engineer</h3>
+            <div class="meta">Bangalore · Dec 2025 – Present</div>
+          </div>
+          <span class="verdict">AC</span>
+        </div>
+        <div class="job-body">
+          <div class="proj">// project: Patronus (Patronus.ai) · Dec 2025 – Present</div>
+          <ul>
+            <li>Validate AI/LLM-generated outputs for accuracy, reliability, and hallucination handling across model responses.</li>
+            <li>Execute manual and Playwright (TypeScript) automation testing for end-to-end feature validation.</li>
+            <li>Manage task workflows via Taiga, including code setup, patch validation, and AI-generated output verification.</li>
+            <li>Follow Git-based workflows (clone, patch, test, PR) and validate VLM scripts to support AI logic execution.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job reveal">
+        <div class="job-head">
+          <div>
+            <h3>Spekond Technologies Consulting Services Pvt Ltd — Senior Test Engineer</h3>
+            <div class="meta">Bangalore · Nov 2021 – Feb 2025</div>
+          </div>
+          <span class="verdict">AC</span>
+        </div>
+        <div class="job-body">
+          <div class="proj">// project: JSW One MSME Platform · Nov 2021 – Feb 2025</div>
+          <ul>
+            <li>Designed and executed BDD Cucumber automation frameworks using Selenium and Java, improving regression coverage.</li>
+            <li>Built a Playwright + TypeScript automation framework with BDD implementation for scalable UI testing.</li>
+            <li>Conducted database testing using SQL and API testing with Postman and Rest Assured.</li>
+            <li>Created consolidated test reports and led QA efforts for live production deployments.</li>
+            <li>Reviewed test cases and mentored team members, improving overall team efficiency.</li>
+            <li><b>Achievement:</b> Led CT migration testing with zero critical issues in production.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="job reveal">
+        <div class="job-head">
+          <div>
+            <h3>3i-Infotech — Software Testing Engineer</h3>
+            <div class="meta">Chennai · Dec 2017 – Nov 2021</div>
+          </div>
+          <span class="verdict">AC</span>
+        </div>
+        <div class="job-body">
+          <div class="proj">// project: French Luxury Fashion (Kenzo) · Dec 2018 – Nov 2021</div>
+          <ul>
+            <li>Tested web and mobile e-commerce platforms using Selenium, Appium, and JIRA.</li>
+            <li>Prepared and executed test scenarios, test conditions, and regression test packs.</li>
+            <li>Coordinated with business analysts and developers to clarify new feature requirements.</li>
+            <li><b>Achievement:</b> Reduced production bugs by 15% through improved test coverage.</li>
+          </ul>
+          <div class="proj" style="margin-top:16px;">// project: Online Food Delivery (Jamis) · Dec 2017 – Nov 2018</div>
+          <ul>
+            <li>Performed functional and regression testing on food ordering systems.</li>
+            <li>Implemented BDD framework and automated test scripts.</li>
+            <li>Conducted bug reporting and requirement analysis with business teams.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <div class="sec-head"><h2># education.txt</h2><div class="rule"></div></div>
+      <div class="json-card reveal">
+        <div class="edu-row">
+          <span class="deg">Bachelor of Engineering – Electrical &amp; Electronics Engineering</span>
+          <span class="school">V.S.B. Engineering College · 2015</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="certifications">
+      <div class="sec-head"><h2># certifications.log</h2><div class="rule"></div></div>
+      <div class="log reveal">
+        <div class="row"><span class="ok">[PASS]</span><span>Playwright: Web Automation Testing from Zero to Hero</span></div>
+        <div class="row"><span class="ok">[PASS]</span><span>Python with Pytest</span></div>
+        <div class="row"><span class="ok">[PASS]</span><span>API + Automation Testing (Selenium with Java)</span></div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="sec-head"><h2># contact.sh</h2><div class="rule"></div></div>
+      <div class="term-card reveal">
+        <div class="cmd">./reach --pradeep</div>
+        <div class="out">resolving fastest channel... email → linkedin → phone</div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="mailto:pradeeparidass99@gmail.com">✉ Send an email</a>
+          <a class="btn btn-outline" href="https://www.linkedin.com/in/pradeep-aridass-senior-qa/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+          <a class="btn btn-outline" href="tel:+919566885302">Call +91-9566885302</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Pradeep Aridass · Senior QA Engineer · Erode, Tamil Nadu, India · built as a static page, zero backend, zero flake.
+    </footer>
+  </main>
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+</script>
+</body>
+</html>
